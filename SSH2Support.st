@@ -598,11 +598,6 @@ pad: aString
 HMACSHA1 initializeAfterLoad!
 
 
-
-
-
-
-
 !Integer publicMethods !
 
 sshBit32Shift: offset
@@ -1004,7 +999,7 @@ fileSize
 
 get: limit dataInto: dataStream
 	"Reel in data until the server closes the connection or the limit is reached.
-	At the same time, watch for errors on otherSocket."
+	At the same time, watch for errors."
 
 	| buf bytesRead currentlyRead |
 	currentlyRead := 0.
@@ -1020,7 +1015,7 @@ get: limit dataInto: dataStream
 	^ dataStream!
 
 getData
-	"Reel in all data until the server closes the connection.  At the same time, watch for errors on otherSocket.  Don't know how much is coming.  Put the data on the stream."
+	"Reel in all data until the server closes the connection.  At the same time, watch for errors.  Don't know how much is coming.  Put the data on the stream."
 
 	| rc byteArray |
 	transferedData := nil.
@@ -1036,7 +1031,7 @@ getData
 	^byteArray!
 
 getDataInto: dataStream
-	"Reel in all data until the server closes the connection.  At the same time, watch for errors on otherSocket.  Don't know how much is coming.  Put the data on the stream."
+	"Reel in all data until the server closes the connection.  At the same time, watch for errors.  Don't know how much is coming.  Put the data on the stream."
 
 	^(self dataSocket	receiveAndWaitDataComplete)
 			buffer asByteArray!
@@ -1052,7 +1047,7 @@ getDirectory
 !
 
 getFile: remoteFileName
-		"Obtiene el archivo remoto."
+		"Get remote file <remoteFileName>."
 
 	| data |
 	self openPassiveDataConnection.
@@ -1087,13 +1082,13 @@ getFileNamed: remoteFileName
 	^data!
 
 getFileNamed: remoteFileName to: fullPath
-		"Recupera el archivo y lo guarda en el archivo."
+		"Get remote file <remoteFileName> and save it into <fullPath>."
 
 	| file data |
 	data := self getFileNamed: remoteFileName.
 	file := CfsReadWriteFileStream openEmpty: fullPath.
 	file nextPutAll: (data contents).
-	file close.!
+	file close !
 
 getFileSize: aFileName
 
@@ -1104,9 +1099,7 @@ getFileSize: aFileName
 login
 
 	self user isNil ifTrue: [^(AbtError errorText: 'Error FTP. El usuario no puede ser nil')].
-
 	self isConnected ifFalse: [ self connect ].
-
 	self sendCommand: 'USER ', self user.
 
 	"331 Password required"
@@ -1122,7 +1115,6 @@ loginUser: userName password: passwdString
 
 	self user: userName.
 	self password: passwdString.
-
 	self login!
 
 openDataSocket: remoteHostAddress port: dataPort
@@ -1557,10 +1549,6 @@ checkConnectionActive
 
 	socketStream atEnd ifTrue: [self error: 'Connection closed by server']
 
-
-
-
-
 !
 
 checkServerHostKeyAlgorithms
@@ -1597,7 +1585,6 @@ describeString: aString
 
 	^(self integerToString: aString size), aString
 
-
 !
 
 determineEncryptionAlgorithms
@@ -1613,7 +1600,6 @@ determineHMACAlgorithms
 
 	hmacCreateAlgorithm := clientConfiguration compatibleHMACCreateAlgorithm: serverConfiguration.
 	hmacCheckAlgorithm := clientConfiguration compatibleHMACCheckAlgorithm: serverConfiguration
-
 
 !
 
@@ -1754,7 +1740,6 @@ getBinary
 
 	getSequenceNumber := getSequenceNumber + 1.
 	^self filter: payLoad
-
 
 !
 
@@ -1948,7 +1933,6 @@ isServerIdentifier: aString
 
 	^'SSH-*-*' match: aString
 
-
 !
 
 logError: anObject value: aString
@@ -2022,7 +2006,6 @@ reExchangeKeys: response
 
 	serverConfiguration configureFromKeyExchangeInit: response.
 	self exchangeKeys
-
 
 !
 
@@ -2110,12 +2093,6 @@ sendLoginRequest
 	"Send login request message to server host."
 
 	self send: SSH2Message messageSSHLoginRequest
-
-
-	
-
-	
-
 	
 !
 
@@ -2137,12 +2114,6 @@ sendUserAuthorization: username password: password
 	"Send user authorization request message to server host for <username> and <password>."
 
 	self send: (SSH2Message messageAuthorizationRequestUser: username password: password)
-
-	
-	
-
-	
-
 	
 !
 
@@ -2165,10 +2136,6 @@ startup
 		registerServerData;
 		exchangeKeys;
 		setInitialized
-
-
-
-
 
 !
 
@@ -2286,12 +2253,7 @@ checkWindowAdjust: windowSize channel: aNumber
 	(windowSizesClientToServer at: aNumber) < 0	ifTrue: [
 		self send: (SSH2Message messageWindowAdjust: (serverChannels at: aNumber) size: windowSize).
 		windowSizesClientToServer at: aNumber put: (windowSizesClientToServer at: aNumber) + windowSize]
-
-
-
-
-	
-	
+		
 	!
 
 dirName: aString
@@ -2304,8 +2266,6 @@ getFile: aString
 
 	^self getFile: aString progress: [:object | ]
 	
-	
-	
 !
 
 getFile: aString in: localPath
@@ -2315,7 +2275,6 @@ getFile: aString in: localPath
 	[(file := CfsWriteFileStream open: localPath)
 			nextPutAll: (self getFile: aString);
 			flush] ensure: [file close]
-
 
 !
 
@@ -2340,8 +2299,6 @@ getFile: aString progress: aMonadicValuable
 	file := self readFile: handle size: size progress: aMonadicValuable.
 	self sendClose: handle.
 	^file
-	
-	
 	
 !
 
@@ -2421,7 +2378,6 @@ processName: response
 		ifTrue: [self logError: response status value: response message. ^''].
 	self error: 'Expected SSH_FXP_NAME or SSH_FXP_STATUS'
 
-
 !
 
 processNextStatusRequestOk: response
@@ -2457,7 +2413,6 @@ processStatusRequestOk: response
 		ifFalse: [self logError: response status value: response message. ^false].
 	^true
 
-
 !
 
 putFile: fileName data: data
@@ -2469,10 +2424,6 @@ putFile: fileName data: data
 	self sendCreateFile: remoteFile.
 	handle := self processHandleRequest: self getSFTP.
 	^self sendData: data for: handle
-
-
-
-	
 	
 !
 
@@ -2614,8 +2565,6 @@ sendSFTP: aSFTPMessage
 	requestId notNil ifTrue: [aSFTPMessage requestId: requestId].
 	^self sendToChannel: SSH_FXP_CHANNEL data: aSFTPMessage contents
 
-	
-
 	!
 
 sendToChannel: aNumber data: aString
@@ -2634,9 +2583,6 @@ sendToChannel: aNumber data: aString
 	windowSizesClientToServer at: aNumber put: (windowSizesClientToServer at: aNumber) - aString size.
 	self checkWindowAdjust: self windowSize channel: aNumber.
 	^self send: (SSH2Message messageChannel: (serverChannels at: aNumber) data: aString)
-
-	
-	
 	
 	!
 
@@ -2740,8 +2686,6 @@ messageRealPath: aString
 		data: aString;
 		yourself
 
-
-
 !
 
 messageSFTPInit
@@ -2790,15 +2734,12 @@ contents
 
 	^self describeString: type asCharacter asString, self requestIdDescription, self basicContents
 
-
-
 !
 
 describeString: aString
 	"Answer a binary representation for <aString>."
 
 	^(self integerToString: aString size), aString
-
 
 !
 
@@ -3110,7 +3051,6 @@ binaryDescription
 			with: (SSHMessageFieldInteger for: #read)
 			with: (SSHMessageFieldInteger for: #windowSize))
 
-
 !
 
 handle
@@ -3169,9 +3109,6 @@ binaryDescription
 		(OrderedCollection
 			with: (SSHMessageFieldInteger for: #status)
 			with: (SSHMessageFieldString for: #message))
-
-
-
 
 	!
 
@@ -3265,7 +3202,6 @@ binaryDescription
 			with: (SSHMessageFieldInteger for: #sent)
 			with: (SSHMessageFieldString for: #bytes))
 
-
 !
 
 bytes
@@ -3297,7 +3233,6 @@ sent: anObject
 	sent := anObject! !
 
 SFTPMessageWrite initializeAfterLoad!
-
 
 
 Object subclass: #SSH2Message
@@ -3365,7 +3300,7 @@ messageDisconnectReason: anInteger
 	^(SSH2Message messageFor: SSH_MSG_DISCONNECT)
 		reason: anInteger;
 		description: '';
-		languajeTag: '';
+		languageTag: '';
 		yourself
 !
 
@@ -3384,8 +3319,8 @@ macAlgorithmsClientToServer: macAlgorithmsServer
 macAlgorithmsServerToClient: macAlgorithmsClient
 compressionAlgorithmsClientToServer: compressionAlgorithmsClient
 compressionAlgorithmsServerToClient: compressionAlgorithmsServer
-languajesClientToServer: languajesClient
-languajesServerToClient: languajesServer	
+languagesClientToServer: languagesClient
+languagesServerToClient: languagesServer	
 
 	^(SSH2Message messageFor: SSH_MSG_KEXINIT)
 		cookie: cookieString;
@@ -3397,8 +3332,8 @@ languajesServerToClient: languajesServer
 		macAlgorithmsServerToClient: macAlgorithmsClient;
 		compressionAlgorithmsClientToServer: compressionAlgorithmsClient;
 		compressionAlgorithmsServerToClient: compressionAlgorithmsServer;
-		languajesClientToServer: languajesClient;
-		languajesServerToClient: languajesServer;
+		languagesClientToServer: languagesClient;
+		languagesServerToClient: languagesServer;
 		yourself
 !
 
@@ -3928,7 +3863,7 @@ SSH2MessageData initializeAfterLoad!
 
 
 SSH2Message subclass: #SSH2MessageDisconnect
-    instanceVariableNames: 'reason description languajeTag '
+    instanceVariableNames: 'reason description languageTag '
     classVariableNames: ''
     poolDictionaries: ''!
 
@@ -3948,7 +3883,7 @@ binaryDescription
 		(OrderedCollection
 			with: (SSHMessageFieldString for: #description)
 			with: (SSHMessageFieldString for: #reason)
-			with: (SSHMessageFieldString for: #languajeTag))
+			with: (SSHMessageFieldString for: #languageTag))
 !
 
 description
@@ -3961,14 +3896,14 @@ description: anObject
 	description := anObject
 !
 
-languajeTag
+languageTag
 
-	^languajeTag
+	^languageTag
 !
 
-languajeTag: anObject
+languageTag: anObject
 
-	languajeTag := anObject
+	languageTag := anObject
 !
 
 reason
@@ -4072,7 +4007,7 @@ SSH2MessageKexDHReply initializeAfterLoad!
 
 
 SSH2Message subclass: #SSH2MessageKexInit
-    instanceVariableNames: 'cookie keyExchangeAlgorithms serverHostKeyAlgorithms encryptionAlgorithmsClientToServer encryptionAlgorithmsServerToClient macAlgorithmsClientToServer macAlgorithmsServerToClient compressionAlgorithmsClientToServer compressionAlgorithmsServerToClient languajesClientToServer languajesServerToClient firstKexPacketFollows reserved payload '
+    instanceVariableNames: 'cookie keyExchangeAlgorithms serverHostKeyAlgorithms encryptionAlgorithmsClientToServer encryptionAlgorithmsServerToClient macAlgorithmsClientToServer macAlgorithmsServerToClient compressionAlgorithmsClientToServer compressionAlgorithmsServerToClient languagesClientToServer languagesServerToClient firstKexPacketFollows reserved payload '
     classVariableNames: ''
     poolDictionaries: ''!
 
@@ -4100,8 +4035,8 @@ binaryDescription
 			add: (SSHMessageFieldStringCollection for: #macAlgorithmsServerToClient);
 			add: (SSHMessageFieldStringCollection for: #compressionAlgorithmsClientToServer);
 			add: (SSHMessageFieldStringCollection for: #compressionAlgorithmsServerToClient);
-			add: (SSHMessageFieldStringCollection for: #languajesClientToServer);
-			add: (SSHMessageFieldStringCollection for: #languajesServerToClient);
+			add: (SSHMessageFieldStringCollection for: #languagesClientToServer);
+			add: (SSHMessageFieldStringCollection for: #languagesServerToClient);
 			add: (SSHMessageFieldHole for: (String withAll: (#(0 0 0 0 0) collect: [:each | each asCharacter])));
 			yourself)
 !
@@ -4168,21 +4103,21 @@ keyExchangeAlgorithms: anObject
 
 	keyExchangeAlgorithms := anObject!
 
-languajesClientToServer 
+languagesClientToServer 
 
-	^languajesClientToServer !
+	^languagesClientToServer !
 
-languajesClientToServer: anObject
+languagesClientToServer: anObject
 
-	languajesClientToServer := anObject!
+	languagesClientToServer := anObject!
 
-languajesServerToClient  
+languagesServerToClient  
 
-	^languajesServerToClient  !
+	^languagesServerToClient  !
 
-languajesServerToClient: anObject
+languagesServerToClient: anObject
 
-	languajesServerToClient := anObject!
+	languagesServerToClient := anObject!
 
 macAlgorithmsClientToServer
 
@@ -4259,7 +4194,7 @@ SSH2MessageWindowAdjust initializeAfterLoad!
 
 
 Object subclass: #SSHHostConfiguration
-    instanceVariableNames: 'identifier publicKey publicKeyFormat publicKeyData privateKey cookie kexInitPayload keyExchangeAlgorithms serverHostKeysAlgorithms encryptionClientToServerAlgorithms encryptionServerToClientAlgorithms macClientToServerAlgorithms macServerToClientAlgorithms compressionClientToServerAlgorithms compressionServerToClientAlgorithms languajesClientToServer languajesServerToClient '
+    instanceVariableNames: 'identifier publicKey publicKeyFormat publicKeyData privateKey cookie kexInitPayload keyExchangeAlgorithms serverHostKeysAlgorithms encryptionClientToServerAlgorithms encryptionServerToClientAlgorithms macClientToServerAlgorithms macServerToClientAlgorithms compressionClientToServerAlgorithms compressionServerToClientAlgorithms languagesClientToServer languagesServerToClient '
     classVariableNames: ''
     poolDictionaries: ''!
 
@@ -4278,8 +4213,8 @@ defaultIdentified: aString cookie: anotherString
 		macServerToClientAlgorithms: self possibleMacAlgorithms;
 		compressionClientToServerAlgorithms: self possibleCompressionAlgorithms;
 		compressionServerToClientAlgorithms: self possibleCompressionAlgorithms;
-		languajesClientToServer: '';
-		languajesServerToClient: '';
+		languagesClientToServer: '';
+		languagesServerToClient: '';
 		yourself!
 
 possibleCompressionAlgorithms
@@ -4421,8 +4356,8 @@ configureFromKeyExchangeInit: aSSH2Message
 	macServerToClientAlgorithms := aSSH2Message macAlgorithmsServerToClient.
 	compressionClientToServerAlgorithms := aSSH2Message compressionAlgorithmsClientToServer.
 	compressionServerToClientAlgorithms := aSSH2Message compressionAlgorithmsServerToClient.
-	languajesClientToServer := aSSH2Message languajesClientToServer.
-	languajesServerToClient := aSSH2Message languajesServerToClient!
+	languagesClientToServer := aSSH2Message languagesClientToServer.
+	languagesServerToClient := aSSH2Message languagesServerToClient!
 
 cookie
 
@@ -4468,21 +4403,21 @@ keyExchangeAlgorithms: anObject
 
 	keyExchangeAlgorithms := anObject!
 
-languajesClientToServer
+languagesClientToServer
 
-	^languajesClientToServer!
+	^languagesClientToServer!
 
-languajesClientToServer: anObject
+languagesClientToServer: anObject
 
-	languajesClientToServer := anObject!
+	languagesClientToServer := anObject!
 
-languajesServerToClient
+languagesServerToClient
 
-	^languajesServerToClient!
+	^languagesServerToClient!
 
-languajesServerToClient: anObject
+languagesServerToClient: anObject
 
-	languajesServerToClient := anObject!
+	languagesServerToClient := anObject!
 
 macClientToServerAlgorithms
 
@@ -4513,8 +4448,8 @@ messageForKeyExchange
 							macAlgorithmsServerToClient: macServerToClientAlgorithms
 							compressionAlgorithmsClientToServer: compressionClientToServerAlgorithms
 							compressionAlgorithmsServerToClient: compressionServerToClientAlgorithms
-							languajesClientToServer: languajesClientToServer
-							languajesServerToClient: languajesServerToClient.
+							languagesClientToServer: languagesClientToServer
+							languagesServerToClient: languagesServerToClient.
 	kexInitPayload := message contents.
 	^message!
 
@@ -4806,7 +4741,6 @@ describeCollection: aCollection
 		do: [:each | stream nextPutAll: each]	
 		separatedBy: [stream nextPut: $,].
 	^(self integerToString: stream contents size), stream contents
-
 
 !
 
